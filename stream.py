@@ -1,25 +1,13 @@
 import subprocess
 
-# ✅ Start streaming process
-def start_stream():
-    command = [
-        'ffmpeg',
-        '-re',
-        '-stream_loop', '-1',  # Loop infinitely
-        '-i', 'uploaded_videos/cosmic ray.mp4',  # Make sure file is exactly this name
-        '-vcodec', 'libx264',
-        '-preset', 'veryfast',
-        '-maxrate', '3000k',
-        '-bufsize', '6000k',
-        '-pix_fmt', 'yuv420p',
-        '-g', '50',
-        '-r', '25',
-        '-f', 'flv',
-        'rtmp://a.rtmp.youtube.com/live2/mbbh-5q15-4khd-q11h-4cds'  # ✅ Your new stream key
-    ]
+playlist_url = "https://www.youtube.com/playlist?list=PLu-MpimWrpP-WKvxaRcpV5iIAVrBHd8A6"
+stream_key = "mbbh-5q15-4khd-q11h-4cds"
+rtmp_url = f"rtmp://a.rtmp.youtube.com/live2/{stream_key}"
 
-    return subprocess.Popen(command)
+command = f'''
+yt-dlp -f bestaudio --yes-playlist -o - "{playlist_url}" | \\
+ffmpeg -re -i - -c:v libx264 -preset veryfast -c:a aac -b:a 128k -f flv "{rtmp_url}"
+'''
 
-# ✅ Stop streaming process
-def stop_stream(process):
-    process.terminate()
+subprocess.call(command, shell=True)
+   
