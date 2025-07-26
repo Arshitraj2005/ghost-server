@@ -2,7 +2,7 @@ from flask import Flask
 import subprocess
 import threading
 
-app = Flask(name)
+app = Flask(__name__)
 
 def run_stream():
     subprocess.call(["python", "stream.py"])
